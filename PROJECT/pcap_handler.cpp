@@ -404,174 +404,6 @@ void runOffline(const char* filename)
     printf("pcap_loop() failed: %s\n", pcap_geterr(pcap_file));
     return;
   }
-/*
-  for(auto it = hosts.begin(); it != hosts.end(); ++it)
-  {
-    if(it->second.scan_weight > 21 && it->second.scan_delay_avg/it->second.ports.size() < SCAN_DELAY){//just random number
-      char sourceIP[INET_ADDRSTRLEN];
-      inet_ntop(AF_INET, &(it->second.ip_src), sourceIP, INET_ADDRSTRLEN);//AF_INET for IPv4 protocol
-      char destIP[INET_ADDRSTRLEN];
-      inet_ntop(AF_INET, &(it->second.ip_dst), destIP, INET_ADDRSTRLEN);
-      if(it->second.protocol == IPPROTO_UDP)
-      {
-        printf("Possible UDP scan detected from %s to %s\n", sourceIP, destIP);
-        printf("From port:#{%d} to %d number of ports:\n", it->second.source_port, it->second.ports.size());
-        printf("--------------\n");
-        udp_scans += it->second.ports.size();
-
-        for(auto j = it->second.ports.begin(); j != it->second.ports.end(); ++j)
-        {
-          printf("%d\/ ", *j);
-        }
-        printf("\n");
-        printf("--------------\n");
-        for(auto n_ptr = it->second.next; n_ptr != nullptr; n_ptr = n_ptr->next)
-        {
-          char nextIP[INET_ADDRSTRLEN];
-          inet_ntop(AF_INET, &(n_ptr->ip_dst), nextIP, INET_ADDRSTRLEN);
-          if(n_ptr->protocol == IPPROTO_UDP)
-          {
-            printf("Possible UDP scan detected from %s to %s\n", sourceIP, nextIP);
-            printf("From port:#{%d} to %d number of ports:\n", n_ptr->source_port, n_ptr->ports.size());
-            udp_scans += n_ptr->ports.size();
-            for(auto j = n_ptr->ports.begin(); j != n_ptr->ports.end(); ++j)
-            {
-              printf("%d\/ ", *j);
-            }
-            printf("\n");
-            printf("--------------\n");
-          }
-          else if(n_ptr->protocol == IPPROTO_TCP)
-          {
-            printf("Possible tcp scan detected from %s to %s\n", sourceIP, nextIP);
-            printf("From port:#{%d} to %d number of ports:\n", n_ptr->source_port, n_ptr->ports.size());
-            tcp_scans += n_ptr->ports.size();
-            switch(n_ptr->flags){
-              case 0x29:
-                xmas_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: XMAS-scan");
-                break;
-              case 0x00:
-                null_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: NULL-scan");
-                break;
-              case 0x02:
-                halfopen_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: Syn|Half-open|-scan");
-                break;
-              default: break;
-            }
-            for(auto j = n_ptr->ports.begin(); j != n_ptr->ports.end(); ++j)
-            {
-              printf("%d\/ ", *j);
-            }
-            printf("\n");
-            printf("--------------\n");
-          }
-        }
-      }
-      else if(it->second.protocol == IPPROTO_TCP)
-      {
-        printf("Possible TCP scan detected from %s to %s\n", sourceIP, destIP);
-        printf("From port:#{%d} to %d number of ports:\n", it->second.source_port, it->second.ports.size());
-        tcp_scans += it->second.ports.size();
-        switch(it->second.flags)
-        {
-          case 0x29:
-            xmas_scans += it->second.ports.size();
-            printf("Possible Type of the scan: XMAS-scan");
-            break;
-          case 0x00:
-            null_scans += it->second.ports.size();
-            printf("Possible Type of the scan: NULL-scan");
-            break;
-          case 0x02:
-            halfopen_scans += it->second.ports.size();
-            printf("Possible Type of the scan: Syn|Half-open|-scan");
-            break;
-          default: break;
-        }
-        printf("--------------\n");
-
-        for(auto j = it->second.ports.begin(); j != it->second.ports.end(); ++j)
-        {
-          printf("%d\/ ", *j);
-        }
-        printf("\n");
-        printf("--------------\n");
-        for(auto n_ptr = it->second.next; n_ptr != nullptr; n_ptr = n_ptr->next)
-        {
-          char nextIP[INET_ADDRSTRLEN];
-          inet_ntop(AF_INET, &(n_ptr->ip_dst), nextIP, INET_ADDRSTRLEN);
-          if(n_ptr->protocol == IPPROTO_TCP)
-          {
-            printf("Possible tcp scan detected from %s to %s\n", sourceIP, nextIP);
-            printf("From port:#{%d} to %d number of ports:\n", n_ptr->source_port, n_ptr->ports.size());
-            tcp_scans += n_ptr->ports.size();
-            switch(n_ptr->flags){
-              case 0x29:
-                xmas_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: XMAS-scan");
-                break;
-              case 0x00:
-                null_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: NULL-scan");
-                break;
-              case 0x02:
-                halfopen_scans += n_ptr->ports.size();
-                printf("Possible Type of the scan: Syn|Half-open|-scan");
-                break;
-              default: break;
-            }
-            for(auto j = n_ptr->ports.begin(); j != n_ptr->ports.end(); ++j)
-            {
-              printf("%d\/ ", *j);
-            }
-            printf("\n");
-            printf("--------------\n");
-          }
-          else if(n_ptr->protocol == IPPROTO_UDP)
-          {
-            printf("Possible UDP scan detected from %s to %s\n", sourceIP, nextIP);
-            printf("From port:#{%d} to %d number of ports:\n", n_ptr->source_port, n_ptr->ports.size());
-            udp_scans += n_ptr->ports.size();
-            for(auto j = n_ptr->ports.begin(); j != n_ptr->ports.end(); ++j)
-            {
-              printf("%d\/ ", *j);
-            }
-            printf("\n");
-            printf("--------------\n");
-        }
-      }
-    }
-    char sourceIP[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(it->second.ip_src), sourceIP, INET_ADDRSTRLEN);//AF_INET for IPv4 protocol
-    char destIP[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(it->second.ip_dst), destIP, INET_ADDRSTRLEN);
-    printf("%s to %s\n", sourceIP, destIP);
-    printf("Source port:#{%d} to %d number of ports:\n", it->second.source_port, it->second.ports.size());
-    printf("Protocol: %d\n", it->second.protocol);
-    printf("Scan weight: %d\n", it->second.scan_weight);
-    printf("Delay avg: %d\n", it->second.scan_delay_avg/it->second.ports.size());
-    printf("Flags: %d\n", it->second.flags);
-    printf("--------------\n");
-    for(auto n_ptr = it->second.next; n_ptr != nullptr; n_ptr = n_ptr->next)
-    {
-      char nextIP[INET_ADDRSTRLEN];
-      inet_ntop(AF_INET, &(n_ptr->ip_dst), nextIP, INET_ADDRSTRLEN);
-      printf("%s to %s\n", sourceIP, nextIP);
-      printf("Source port:#{%d} to %d number of ports:\n", n_ptr->source_port, n_ptr->ports.size());
-      printf("Protocol: %d\n", n_ptr->protocol);
-      printf("Scan weight: %d\n", n_ptr->scan_weight);
-      printf("Delay avg: %d\n", n_ptr->scan_delay_avg/n_ptr->ports.size());
-      printf("Flags: %d\n", n_ptr->flags);
-      printf("--------------\n");
-
-    }
-
-}
-*/
-//
 
   for(auto it = UDPhosts.begin(); it != UDPhosts.end(); ++it)
   {
@@ -579,60 +411,92 @@ void runOffline(const char* filename)
     inet_ntop(AF_INET, &(it->second.ip_src), sourceIP, INET_ADDRSTRLEN);//AF_INET for IPv4 protocol
     char destIP[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(it->second.ip_dst), destIP, INET_ADDRSTRLEN);
-    printf("Source IP: %s ------ Destination IP: %s\n", sourceIP, destIP);
     for(int i = 0; i < it->second.connections.size(); ++i)
     {
-      printf("Source port: %d ------- ", it->second.connections[i].source_port);
-      printf("Ports connected: %d ", it->second.connections[i].ports.size());
-      printf("scan_weight = %d, scan_delay_avg = %d\n", it->second.connections[i].scan_weight, it->second.connections[i].scan_delay_avg);
-      if(it->second.connections[i].scan_delay_avg >= 1 and it->second.connections[i].scan_weight >= 21 and it->second.connections[i].ports.size() > 21)
-      udp_scans += it->second.connections[i].ports.size();
+      if(it->second.connections[i].scan_delay_avg >= 1 and it->second.connections[i].scan_weight >= 21 and it->second.connections[i].ports.size() >= 7 )
+      {
+        udp_scans += it->second.connections[i].ports.size();
+        printf("UDP-scan detected...\n");
+        printf("Source IP: %s =====================> Destination IP: %s\n", sourceIP, destIP);
+        printf("Source port: %d =====================> ", it->second.connections[i].source_port);
+        printf("Number of ports scanned: %d \n", it->second.connections[i].ports.size());
+        printf("List of ports: \n");
+      //  printf("scan_weight = %d, scan_delay = %d\n", it->second.connections[i].scan_weight, it->second.connections[i].scan_delay_avg);
+        for(auto k = it->second.connections[i].ports.begin(); k != it->second.connections[i].ports.end(); ++k)
+        {
+
+          printf("%d ", *k);
+        }
+        printf("\n");
+      }
     }
     if(it->second.next != nullptr)
     {
       for(auto n_ptr = it->second.next; n_ptr != nullptr; n_ptr = n_ptr->next)
       {
         inet_ntop(AF_INET, &(n_ptr->ip_dst), destIP, INET_ADDRSTRLEN);
-        printf("Source IP: %s ------ Destination IP: %s\n", sourceIP, destIP);
+
         for(int i = 0; i < n_ptr->connections.size(); ++i)
         {
-          printf("Source port: %d ------- ", n_ptr->connections[i].source_port);
-          printf("Ports connected: %d ", n_ptr->connections[i].ports.size());
-          printf("scan_weight = %d, scan_delay_avg = %d\n", n_ptr->connections[i].scan_weight, n_ptr->connections[i].scan_delay_avg);
-          if(n_ptr->connections[i].scan_delay_avg >= 1 and n_ptr->connections[i].scan_weight >= 21 and n_ptr->connections[i].ports.size() > 21)
-          udp_scans += n_ptr->connections[i].ports.size();
+          if(n_ptr->connections[i].scan_delay_avg >= 1 and n_ptr->connections[i].scan_weight >= 21 and n_ptr->connections[i].ports.size() >= 7)
+          {
+            udp_scans += n_ptr->connections[i].ports.size();
+            printf("UDP-scan detected...\n");
+            printf("Source IP: %s =====================> Destination IP: %s\n", sourceIP, destIP);
+            printf("Source port: %d =====================> ", n_ptr->connections[i].source_port);
+            printf("Number of ports scanned: %d \n", n_ptr->connections[i].ports.size());
+            printf("List of ports: \n");
+//          printf("scan_weight = %d, scan_delay = %d\n", n_ptr->connections[i].scan_weight, n_ptr->connections[i].scan_delay_avg);
+            for(auto k = n_ptr->connections[i].ports.begin(); k != n_ptr->connections[i].ports.end(); ++k)
+            {
+              printf("%d ", *k);
+            }
+            printf("\n");
+          }
+
         }
       }
     }
   }
-
+  printf("************************************************************\n");
   for(auto it = TCPhosts.begin(); it != TCPhosts.end(); ++it)
   {
     char sourceIP[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(it->second.ip_src), sourceIP, INET_ADDRSTRLEN);//AF_INET for IPv4 protocol
     char destIP[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(it->second.ip_dst), destIP, INET_ADDRSTRLEN);
-    printf("Source IP: %s ------ Destination IP: %s\n", sourceIP, destIP);
     for(int i = 0; i < it->second.connections.size(); ++i)
     {
-      printf("Source port: %d ------- ", it->second.connections[i].source_port);
-      printf("Ports connected: %d ", it->second.connections[i].ports.size());
-      printf("scan_weight = %d, scan_delay_avg = %d\n", it->second.connections[i].scan_weight, it->second.connections[i].scan_delay_avg);
-      if(it->second.connections[i].scan_delay_avg >= 1 and it->second.connections[i].scan_weight >= 21 and it->second.connections[i].ports.size() > 21)
+      char* scanType;
+      if(it->second.connections[i].scan_delay_avg >= 1 and it->second.connections[i].scan_weight >= 21 and it->second.connections[i].ports.size() >= 7)
       {
         tcp_scans += it->second.connections[i].ports.size();
         switch(it->second.connections[i].flags){
           case 0x29:
             xmas_scans += it->second.connections[i].ports.size();
+            scanType = "Xmas-scan";
             break;
           case 0x00:
             null_scans += it->second.connections[i].ports.size();
+            scanType = "Null-scan";
             break;
           case 0x02:
             halfopen_scans += it->second.connections[i].ports.size();
+            scanType = "Halfopen-scan";
             break;
           default: break;
         }
+        printf("TCP-scan detected... Type: %s\n", scanType);
+        printf("Source IP: %s =====================> Destination IP: %s\n", sourceIP, destIP);
+        printf("Source port: %d =====================> ", it->second.connections[i].source_port);
+        printf("Number of ports scanned: %d \n", it->second.connections[i].ports.size());
+        printf("List of ports: \n");
+      //  printf("scan_weight = %d, scan_delay = %d\n", it->second.connections[i].scan_weight, it->second.connections[i].scan_delay_avg);
+        for(auto k = it->second.connections[i].ports.begin(); k != it->second.connections[i].ports.end(); ++k)
+        {
+          printf("%d ", *k);
+        }
+        printf("\n");
       }
     }
     if(it->second.next != nullptr)
@@ -640,27 +504,38 @@ void runOffline(const char* filename)
       for(auto n_ptr = it->second.next; n_ptr != nullptr; n_ptr = n_ptr->next)
       {
         inet_ntop(AF_INET, &(n_ptr->ip_dst), destIP, INET_ADDRSTRLEN);
-        printf("Source IP: %s ------ Destination IP: %s\n", sourceIP, destIP);
         for(int i = 0; i < n_ptr->connections.size(); ++i)
         {
-          printf("Source port: %d ------- ", n_ptr->connections[i].source_port);
-          printf("Ports connected: %d ", n_ptr->connections[i].ports.size());
-          printf("scan_weight = %d, scan_delay_avg = %d\n", n_ptr->connections[i].scan_weight, n_ptr->connections[i].scan_delay_avg);
-          if(n_ptr->connections[i].scan_delay_avg > SCAN_DELAY and n_ptr->connections[i].scan_weight >= 21 and n_ptr->connections[i].ports.size() > 21)
+          char* scanType;
+          if(n_ptr->connections[i].scan_delay_avg > SCAN_DELAY and n_ptr->connections[i].scan_weight >= 21 and n_ptr->connections[i].ports.size() >= 7)
           {
             tcp_scans += n_ptr->connections[i].ports.size();
             switch(n_ptr->connections[i].flags){
               case 0x29:
                 xmas_scans += n_ptr->connections[i].ports.size();
+                scanType = "Xmas-scan";
                 break;
               case 0x00:
                 null_scans += n_ptr->connections[i].ports.size();
+                scanType = "Null-scan";
                 break;
               case 0x02:
                 halfopen_scans += n_ptr->connections[i].ports.size();
+                scanType = "Halfopen-scan";
                 break;
               default: break;
             }
+            printf("TCP-scan detected... Type: %s\n", scanType);
+            printf("Source IP: %s =====================> Destination IP: %s\n", sourceIP, destIP);
+            printf("Source port: %d =====================> ", n_ptr->connections[i].source_port);
+            printf("Number of ports scanned: %d \n", n_ptr->connections[i].ports.size());
+            printf("List of ports: \n");
+//          printf("scan_weight = %d, scan_delay = %d\n", n_ptr->connections[i].scan_weight, n_ptr->connections[i].scan_delay_avg);
+            for(auto k = n_ptr->connections[i].ports.begin(); k != n_ptr->connections[i].ports.end(); ++k)
+            {
+              printf("%d ", *k);
+            }
+            printf("\n");
           }
         }
       }
@@ -672,13 +547,13 @@ void runOffline(const char* filename)
   printf("*%s* packet summary\n", filename);
   printf("Total number of packets: %d\n", total_quant);
   printf("----------------------------------------\n");
-  printf("Number of possible icmp packets: %d\n", icmp_quant);
+  printf("Number of icmp packets: %d\n", icmp_quant);
   printf("Number of possible icmp requests(pings): %d\n", icmp_requests);
   printf("----------------------------------------\n");
-  printf("Number of possible udp packets: %d\n", udp_quant);
+  printf("Number of udp packets: %d\n", udp_quant);
   printf("Number of possible udp scans: %d\n", udp_scans);
   printf("----------------------------------------\n");
-  printf("Number of possible tcp packets: %d\n", tcp_quant);
+  printf("Number of tcp packets: %d\n", tcp_quant);
   printf("Number of possible tcp scans: %d\n", tcp_scans);
   printf("Number of possible null scans: %d\n", null_scans);
   printf("Number of possible xmas scans: %d\n", xmas_scans);
@@ -698,7 +573,7 @@ void runOnline()
 {
   return;
 }
-
+/* To be implemented for online mode
 void print_packetInfo(const u_char *packet, int size)
 {
   struct ether_header* ethernetHeader;
@@ -715,3 +590,4 @@ void print_packetInfo(const u_char *packet, int size)
 
   return;
 }
+*/
