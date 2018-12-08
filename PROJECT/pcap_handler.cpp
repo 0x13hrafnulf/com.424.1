@@ -126,7 +126,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
       current_port_connection.create_time = time(NULL);
       current_port_connection.source_port = ntohs(udpHeader->source);
       current_port_connection.ports.insert(ntohs(udpHeader->dest));
-      current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+      current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 4 : 1;
       current_port_connection.flags = 0;
       current_port_connection.flags_or = 0;
 
@@ -150,7 +150,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
           current_port_connection.create_time = time(NULL);
           current_port_connection.source_port = ntohs(udpHeader->source);
           current_port_connection.ports.insert(ntohs(udpHeader->dest));
-          current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+          current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 4 : 1;
           current_port_connection.flags = 0;
           current_port_connection.flags_or = 0;
 
@@ -176,7 +176,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
                 current_port_connection.create_time = time(NULL);
                 current_port_connection.source_port = ntohs(udpHeader->source);
                 current_port_connection.ports.insert(ntohs(udpHeader->dest));
-                current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+                current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 4 : 1;
                 current_port_connection.flags = 0;
                 current_port_connection.flags_or = 0;
 
@@ -196,7 +196,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
 
                   auto insertion = n_ptr->connections[i].ports.insert(ntohs(udpHeader->dest));
 
-                  if(insertion.second == true )n_ptr->connections[i].scan_weight += ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+                  if(insertion.second == true )n_ptr->connections[i].scan_weight += ntohs(udpHeader->dest) < 1024 ? 4 : 1;
                   break;
                 }
                 else if(i == n_ptr->connections.size() - 1)
@@ -205,7 +205,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
                   current_port_connection.create_time = time(NULL);
                   current_port_connection.source_port = ntohs(udpHeader->source);
                   current_port_connection.ports.insert(ntohs(udpHeader->dest));
-                  current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+                  current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 4 : 1;
                   current_port_connection.flags = 0;
                   current_port_connection.flags_or = 0;
                   n_ptr->connections.push_back(current_port_connection);
@@ -226,7 +226,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
             (it->second).connections[i].scan_delay_avg += now - (it->second).connections[i].time_update;
             (it->second).connections[i].time_update = now;
             auto insertion = (it->second).connections[i].ports.insert(ntohs(udpHeader->dest));
-            if(insertion.second == true) (it->second).connections[i].scan_weight += ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+            if(insertion.second == true) (it->second).connections[i].scan_weight += ntohs(udpHeader->dest) < 1024 ? 4 : 1;
             break;
           }
           else if(i == (it->second).connections.size() - 1)
@@ -235,7 +235,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
             current_port_connection.create_time = time(NULL);
             current_port_connection.source_port = ntohs(udpHeader->source);
             current_port_connection.ports.insert(ntohs(udpHeader->dest));
-            current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 3 : 1;
+            current_port_connection.scan_weight = ntohs(udpHeader->dest) < 1024 ? 4 : 1;
             current_port_connection.flags = 0;
             current_port_connection.flags_or = 0;
             it->second.connections.push_back(current_port_connection);
@@ -264,7 +264,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
       current_port_connection.create_time = time(NULL);
       current_port_connection.source_port = ntohs(tcpHeader->th_sport);
       current_port_connection.ports.insert(ntohs(tcpHeader->th_dport));
-      current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+      current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
       current_port_connection.flags = tcpHeader->th_flags;
       current_port_connection.flags_or = 0;
 
@@ -288,7 +288,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
           current_port_connection.create_time = time(NULL);
           current_port_connection.source_port = ntohs(tcpHeader->th_sport);
           current_port_connection.ports.insert(ntohs(tcpHeader->th_dport));
-          current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+          current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
           current_port_connection.flags = tcpHeader->th_flags;
           current_port_connection.flags_or = 0;
 
@@ -313,7 +313,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
                 current_port_connection.create_time = time(NULL);
                 current_port_connection.source_port = ntohs(tcpHeader->th_sport);
                 current_port_connection.ports.insert(ntohs(tcpHeader->th_dport));
-                current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+                current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
                 current_port_connection.flags = tcpHeader->th_flags;
                 current_port_connection.flags_or = 0;
 
@@ -331,7 +331,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
                   n_ptr->connections[i].scan_delay_avg += now - n_ptr->connections[i].time_update;
                   n_ptr->connections[i].time_update = now;
                   auto insertion = n_ptr->connections[i].ports.insert(ntohs(tcpHeader->th_dport));
-                  if(insertion.second == true) n_ptr->connections[i].scan_weight += ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+                  if(insertion.second == true) n_ptr->connections[i].scan_weight += ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
                   break;
                 }
                 else if(i == n_ptr->connections.size() - 1)
@@ -340,7 +340,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
                   current_port_connection.create_time = time(NULL);
                   current_port_connection.source_port = ntohs(tcpHeader->th_sport);
                   current_port_connection.ports.insert(ntohs(tcpHeader->th_dport));
-                  current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+                  current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
                   current_port_connection.flags = tcpHeader->th_flags;
                   current_port_connection.flags_or = 0;
                   n_ptr->connections.push_back(current_port_connection);
@@ -361,7 +361,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
             (it->second).connections[i].scan_delay_avg += now - (it->second).connections[i].time_update;
             (it->second).connections[i].time_update = now;
             auto insertion = (it->second).connections[i].ports.insert(ntohs(tcpHeader->th_dport));
-            if(insertion.second == true) (it->second).connections[i].scan_weight += ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+            if(insertion.second == true) (it->second).connections[i].scan_weight += ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
             break;
           }
           else if(i == (it->second).connections.size() - 1)
@@ -370,7 +370,7 @@ void packetHandler(u_char *args, const struct pcap_pkthdr *pkt_header, const u_c
             current_port_connection.create_time = time(NULL);
             current_port_connection.source_port = ntohs(tcpHeader->th_sport);
             current_port_connection.ports.insert(ntohs(tcpHeader->th_dport));
-            current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 3 : 1;
+            current_port_connection.scan_weight = ntohs(tcpHeader->th_dport) < 1024 ? 4 : 1;
             current_port_connection.flags = tcpHeader->th_flags;
             current_port_connection.flags_or = 0;
             it->second.connections.push_back(current_port_connection);
