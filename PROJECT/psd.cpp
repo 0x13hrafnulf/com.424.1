@@ -54,7 +54,7 @@ int usage()
 }
 int setDefaults(FlagParams *flags)
 {
-	flags->runMode = 0;
+	flags->runMode = 1;
 	flags->verbosity = 0;
 
 	return 0;
