@@ -34,7 +34,7 @@ struct port_connection
 };
 struct host
 {
-  host* next; // if same ip_src, but different ip_dst;; for future implementations
+  host* next = nullptr; // if same ip_src, but different ip_dst;; for future implementations
   struct in_addr ip_src, ip_dst;
   unsigned int protocol;// UDP||ICMP||TCP
   std::vector<port_connection> connections;
@@ -42,14 +42,12 @@ struct host
   clock_t time_update;
   time_t create_time;
   clock_t scan_delay_avg;
-
   //int port_count;
   //  unsigned short source_port;
   //  std::set<unsigned short> ports;
   //unsigned char flags;
   //unsigned char flags_or; //TCP flags from dest|| urg/ack/psh/rst/syn/fin || 00111111|| xmas = 00101001 || fin = 00000001 || null = 00000000
   //|| half-open = 00010110 or 000000010 || if rst/ack or syn/ack or just rst then outgoing packet
-
 };
 
 //mb add filename to logfiles???
@@ -562,6 +560,52 @@ void runOffline(const char* filename)
   printf("Number of other packets: %d\n", other_quant);
   printf("************************************************************\n");
   printf("Offline mode finished\n");
+
+///////CLEAR////////////
+  for(auto it = TCPhosts.begin(); it != TCPhosts.end(); ++it)
+  {
+    for(int i = 0; i < it->second.connections.size(); ++i)
+    {
+      it->second.connections[i].ports.clear();
+    }
+    it->second.connections.clear();
+    if(it->second.next != nullptr)
+    {
+      for(auto n_ptr = it->second.next; n_ptr != nullptr;)
+      {
+        for(int i = 0; i < n_ptr->connections.size(); ++i)
+        {
+          n_ptr->connections[i].ports.clear();
+        }
+        n_ptr->connections.clear();
+        auto tmp_ptr = n_ptr;
+        n_ptr = n_ptr = n_ptr->next;
+        delete tmp_ptr;
+      }
+    }
+  }
+  for(auto it = UDPhosts.begin(); it != UDPhosts.end(); ++it)
+  {
+    for(int i = 0; i < it->second.connections.size(); ++i)
+    {
+      it->second.connections[i].ports.clear();
+    }
+    it->second.connections.clear();
+    if(it->second.next != nullptr)
+    {
+      for(auto n_ptr = it->second.next; n_ptr != nullptr;)
+      {
+        for(int i = 0; i < n_ptr->connections.size(); ++i)
+        {
+          n_ptr->connections[i].ports.clear();
+        }
+        n_ptr->connections.clear();
+        auto tmp_ptr = n_ptr;
+        n_ptr = n_ptr = n_ptr->next;
+        delete tmp_ptr;
+      }
+    }
+  }
   TCPhosts.clear();
   UDPhosts.clear();
   return;
@@ -573,6 +617,7 @@ void runOnline()
 {
   return;
 }
+
 /* To be implemented for online mode
 void print_packetInfo(const u_char *packet, int size)
 {
